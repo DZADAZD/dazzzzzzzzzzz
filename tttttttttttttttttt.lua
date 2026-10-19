@@ -1,9 +1,9 @@
 --[[
-    ZYROSCRIPT v3.1 — Anime Dice Trade Freeze (EXECUTOR-READY)
+    ZYROSCRIPT v3.2 — Anime Dice Trade Freeze (FIXED DisplayMode)
     • RightShift = ouvrir/fermer
-    • Capture args via __namecall (pas de hookfunction)
+    • Capture args via __namecall (marche partout)
     • UI Glassmorphism + Dump Remotes
-    • Copie-colle DIRECT dans ton exécuteur (pas de loadstring GitHub)
+    • Sans DisplayMode / sans trim / sans hookfunction
 ]]--
 
 -- ============================================================
@@ -55,7 +55,7 @@ local CONFIG = {
 }
 
 -- ============================================================
--- CAPTURE UNIVERSELLE VIA __NAMECALL (marche partout)
+-- CAPTURE UNIVERSELLE VIA __NAMECALL
 -- ============================================================
 local allRemotes = {}
 local capturedArgs = {}   -- [remoteName] = {args...} (dernier appel sortant)
@@ -66,7 +66,6 @@ local function scanRemotes()
     local function add(obj)
         if (obj:IsA("RemoteEvent") or obj:IsA("RemoteFunction")) then
             table.insert(allRemotes, obj)
-            -- Hook entrant
             if obj:IsA("RemoteEvent") then
                 pcall(function()
                     obj.OnClientEvent:Connect(function(...)
@@ -87,7 +86,7 @@ local function getRemote(name)
     return nil
 end
 
--- --- Hook __namecall (capture FireServer / InvokeServer) ---
+-- Hook __namecall (capture FireServer / InvokeServer)
 local hookActive = false
 local function enableNamecallHook()
     if hookActive then return end
@@ -293,7 +292,7 @@ local function createUI()
     screenGui = Instance.new("ScreenGui")
     screenGui.Name = "ZYROScriptGUI"
     screenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
-    screenGui.DisplayMode = Enum.DisplayMode.UIOnly
+    -- DisplayMode retiré (cause de l'erreur)
     screenGui.Parent = LocalPlayer:WaitForChild("PlayerGui")
 
     mainFrame = Instance.new("Frame")
@@ -340,7 +339,7 @@ local function createUI()
     local vBadge = Instance.new("Frame")
     vBadge.Size=UDim2.fromOffset(42,20); vBadge.Position=UDim2.new(1,-56,0.5,0); vBadge.AnchorPoint=Vector2.new(0,0.5)
     vBadge.BackgroundColor3=C.ACCENT_DIM; vBadge.BackgroundTransparency=0.3; vBadge.BorderSizePixel=0; vBadge.Parent=header; corner(vBadge,10)
-    lbl(vBadge, {text="v3.1", size=10, color=C.TEXT, font=Enum.Font.GothamBold, size2d=UDim2.fromScale(1,1), xalign=Enum.TextXAlignment.Center})
+    lbl(vBadge, {text="v3.2", size=10, color=C.TEXT, font=Enum.Font.GothamBold, size2d=UDim2.fromScale(1,1), xalign=Enum.TextXAlignment.Center})
 
     local closeBtn = Instance.new("TextButton")
     closeBtn.Size=UDim2.fromOffset(28,28); closeBtn.Position=UDim2.new(1,-34,0.5,0); closeBtn.AnchorPoint=Vector2.new(0,0.5)
@@ -427,8 +426,8 @@ end
 -- ============================================================
 local ui = createUI()
 scanRemotes()
-enableNamecallHook()  -- <-- LE HOOK QUI FAIT TOUT MARCHER
+enableNamecallHook()
 
-log("✅ ZYROSCRIPT v3.1 prêt — RightShift pour ouvrir")
+log("✅ ZYROSCRIPT v3.2 prêt — RightShift pour ouvrir")
 log("💡 Ouvre un trade, fais 1 ajout + 1 accept MANUEL → les args apparaissent en console")
 log("💡 Puis clique 🔍 Dump Remotes, mets les noms dans CONFIG (en haut), et active les toggles")
